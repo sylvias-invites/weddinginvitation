@@ -1,0 +1,753 @@
+﻿﻿@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap');
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    background: #f4d8e6; /* Pozadí celé stránky */
+    margin: 0;
+    padding: 0;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-family: 'Great Vibes', cursive;
+    overflow-x: hidden; /* Zabrání vodorovnému posouvání */
+    color: #2d2d2d;
+}
+
+.screen {
+    width: 100%;
+    max-width: 500px;
+    height: 100dvh; /* dvh lépe sedí na mobily */
+    background: #f4d8e6;
+    margin: 0 auto;
+    padding: 10px; /* Zrušíme padding-top: 10vh a dáme rovnoměrný okraj */
+    box-sizing: border-box;
+    text-align: center;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: center; /* TOTO vrátí všechno doprostřed svisle */
+    align-items: center; /* Vycentruje vodorovně */
+    overflow: hidden;
+}
+
+h1 {
+    color: black;
+    font-size: 4.0rem; /* Zvětšeno pro mobil */
+    margin-top: 0;
+    margin-bottom: 10px;
+    font-family: 'Great Vibes', cursive;
+    font-weight: 400;
+    padding: 0 10px;
+}
+
+
+.initials {
+    font-family: 'Great Vibes', cursive;
+    font-size: 3rem; /* Velikost podle tvého gusta */
+    color: black;
+    margin-top: 0; /* Mezera od srdíčka */
+    margin-bottom: 0; /* Přitáhne nápis "Setři srdíčko" blíž k iniciálám */
+}
+
+#instruction {
+    margin-top: 0;
+    color: rgba(0,0,0,0.3);
+    font-style: normal;
+    font-family: 'Archivo Narrow', sans-serif;
+    font-size: 1.5rem;
+    font-weight: 400;
+    letter-spacing: 2px;
+}
+
+.invite-text h2 {
+    font-family: 'Great Vibes', cursive;
+    font-size: 1.8rem;
+    margin-bottom: 5px;
+    font-weight: 400;
+}
+
+.invite-text p {
+    font-size: 1.2rem;
+    line-height: 1.2;
+    margin: 5px 0;
+    font-weight: 400;
+}
+/* SPECIFICKY DATUM */
+.invite-text .date {
+    font-weight: 700; /* Tučné písmo pro datum */
+    font-size: 2.2rem; /* Větší písmo jen pro datum */
+    display: inline-block;
+    margin-top: 1px;
+    margin-bottom: 7px;
+}
+
+/* Úprava samotného odpočtu v srdíčku */
+#countdown {
+    gap: 8px !important; /* Zmenšíme mezery mezi políčky, aby se to lépe vešlo do špičky srdce */
+    margin-top: 0 !important;
+}
+
+.heart-wrapper {
+    width: 100%; /* Srdce zabere 90% šířky displeje */
+    max-width: 400px; /* Ale maximálně 400px, aby nebylo obří */
+    aspect-ratio: 1 / 1; /* Udrží čtvercový tvar pro canvas */
+    margin: 0 auto;
+    position: relative;
+    z-index: 2;
+    /*-webkit-mask-image: url('heart.png');
+    mask-image: url('heart.png');
+    -webkit-mask-size: contain;
+    mask-size: contain;
+    -webkit-mask-repeat: no-repeat;
+    -webkit-mask-position: center;*/
+    background: transparent !important;
+    opacity: 0;
+    transition: opacity 0.5s ease;
+}
+
+.heart-wrapper.ready {
+    opacity: 1 !important;
+}
+
+#heart-background {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    z-index: 1; /* Nejnižší vrstva */
+    opacity: 1 !important;
+    visibility: visible !important;
+}
+
+#scratch {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100% !important;
+    height: 100% !important;
+    display: block !important; /* Pojistka proti skrytí */
+    z-index: 10 !important; /* Nad textem */
+    touch-action: none; /* DŮLEŽITÉ pro mobily */
+    cursor: crosshair;
+}
+
+
+.heart-outline {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    opacity: 0.3; /* Jemný obrys srdce, aby text vynikl */
+}
+
+.heart-frame {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    pointer-events: none; /* DŮLEŽITÉ: prst projde skrz na canvas */
+    z-index: 10; /* Je pod canvasem */
+    border: 2px solid transparent; /* Jen pojistka */
+    user-select: none;
+    -webkit-user-drag: none;
+    -webkit-touch-callout: none; /* Zamezí vyskočení menu při dlouhém podržení na iPhonu */
+    pointer-events: none !important;
+    display: none;
+}
+
+/* Obal pro celou řadu v záhlaví */
+.header-row {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 15px;
+    width: fit-content;
+    margin: 5px auto 15px auto;
+    /* ZRUŠÍME OHRANIČENÍ A STÍN KOLEM DOKOLA */
+    box-shadow: none !important;
+    border-radius: 0;
+    /* PŘIDÁME JEMNOU LINKU, KTERÁ MÁ POD SEBOU STÍN */
+    padding-bottom: 3px; /* Mezera mezi textem a linkou */
+    border-bottom: 1px solid rgba(0,0,0,0.05); /* Skoro neviditelná linka */
+    /* A pod tu linku dáme velmi jemný "glow" efekt směrem dolů */
+}
+
+/* Styl pro texty (iniciály a datum) */
+.header-item {
+    font-family: 'Great Vibes', cursive;
+    font-size: 1rem;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: #000;
+    white-space: nowrap; /* Aby se datum nezalomilo na dva řádky */
+}
+
+.info-heart-icon {
+    width: 60px; /* Velikost srdíčka, můžeš upravit podle sebe */
+    height: auto;
+    margin-bottom: 0 !important; /* Zrušíme spodní okraj, teď je v řadě */
+    display: inline-block;
+    /* Pokud by srdíčko nebylo uprostřed, tohle ho tam dotlačí: */
+}
+
+.invite-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 2; /* Pod canvasem */
+    pointer-events: none;
+}
+
+.invite-text {
+    position: relative;
+    top: -35px;
+    text-align: center;
+    z-index: 2; /* Úplně vespod */
+    width: 80%;
+}
+
+canvas {
+    width: 100% !important;
+    height: 100% !important;
+    touch-action: none;
+}
+
+.hidden {
+    display: none !important;
+}
+
+#confetti-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none !important;
+    z-index: 999; /* Aby byly nad vším ostatním */
+    overflow: hidden; /* Pojistka proti vyjíždění konfet ven */
+}
+
+.confetti {
+    position: absolute;
+    width: 10px;
+    height: 10px;
+    top: -10px;
+    z-index: 10;
+    pointer-events: none;
+    box-shadow: 1px 1px 3px rgba(0,0,0,0.2);
+}
+
+/* Nastavení pro tablety a počítače (obrazovka širší než 768px) */
+@media (min-width: 768px) {
+    .screen {
+        justify-content: center; /* Na počítači to vycentruje krásně doprostřed */
+        padding-top: 0; /* Zrušíme ten horní okraj, co jsme dávali kvůli mobilu */
+    }
+
+    h1 {
+        font-size: 5rem; /* Na velkém monitoru si můžeme dovolit větší nadpis */
+        margin-bottom: 30px;
+    }
+
+    .heart-wrapper {
+        max-width: 450px; /* Srdce na desktopu může být o něco větší */
+    }
+}
+
+.sparkle {
+    position: absolute;
+    width: 4px;
+    height: 4px;
+    background: #f4d8e6;
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 1000;
+    box-shadow: 0 0 5px #fff, 0 0 10px #ffd700;
+}
+
+/* Animace pro bliknutí jiskry */
+@keyframes sparkleAnim {
+    0% {
+        transform: scale(0);
+        opacity: 0;
+    }
+
+    50% {
+        transform: scale(1.5);
+        opacity: 1;
+    }
+
+    100% {
+        transform: scale(0);
+        opacity: 0;
+    }
+}
+
+/*Kalendář tlačítko*/
+
+#calendar-wrapper {
+    position: absolute;
+    display: flex !important;
+    flex-direction: column !important; /* Tlačí je pod sebe */
+    gap: 15px !important; /* Mezera mezi tlačítky */
+    bottom: 5vh; /* Zkus to dát trochu výš od spodku */
+    left: 50%;
+    transform: translateX(-50%);
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 1s ease 1s, visibility 1s ease 1s;
+    z-index: 9999 !important; /* Maximální priorita */
+    width: auto; /* Změna z 100% na auto, aby se lépe klikalo */
+    white-space: nowrap;
+    pointer-events: none;
+    width: 90%; /* Aby se na mobilu roztáhla podle potřeby */
+    max-width: 320px;
+}
+
+#calendar-wrapper.visible {
+    opacity: 1 !important;
+    visibility: visible !important;
+    pointer-events: auto !important;
+}
+
+.calendar-btn {
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 15px;
+    padding: 6px 15px; /* Větší plocha pro prst */
+    /*background-color: white;
+    color: #ffffff !important;*/
+    background: white;
+    color: black !important;
+    border: 2px solid rgba(0,0,0,0.3);
+    text-decoration: none !important;
+    white-space: nowrap; /* ZAKÁŽE zalomení na dva řádky */
+    flex-wrap: nowrap; /* Pojistka pro flexbox */
+    font-style: normal;
+    font-family: 'Archivo Narrow', sans-serif;
+    font-size: 1rem;
+    letter-spacing: 1.5px;
+    /*font-line: 1.5;*/
+    border-radius: 30px; /*zaoblení rohů*/
+    /*font-weight: bold;*/
+    box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+    min-width: 220px; /* Aby byla obě tlačítka stejně široká */
+    pointer-events: auto !important; /* POJISTKA: Aby na to šlo kliknout */
+}
+
+.calendar-btn:active {
+    transform: scale(0.95);
+}
+
+.hidden {
+    display: none;
+}
+
+.hidden-at-start {
+    opacity: 0 !important;
+    visibility: hidden !important;
+}
+
+.calendar-icon {
+    flex-shrink: 0 !important;
+    width: 24px;
+    height: 24px;
+    border: 2px solid rgba(0,0,0,0.3);
+    border-radius: 4px;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Archivo Narrow', sans-serif;
+    font-size: 0.8rem;
+    font-weight: 700;
+    line-height: 1;
+    padding-top: 4px; /* Prostor pro "kroužky" kalendáře */
+}
+
+    /* Tyhle dva kousky vytvoří ty typické kroužky nahoře na kalendáři */
+    .calendar-icon::before, .calendar-icon::after {
+        content: '';
+        position: absolute;
+        top: -4px;
+        width: 2px;
+        height: 6px;
+        background: rgba(0,0,0,0.3);
+        border-radius: 2px;
+    }
+
+    .calendar-icon::before {
+        left: 5px;
+    }
+
+    .calendar-icon::after {
+        right: 5px;
+    }
+
+@media (max-width: 360px) {
+    .calendar-btn {
+        font-size: 0.85rem; /* Ještě o kousek menší písmo pro mini displeje */
+        padding: 8px 15px;
+        gap: 5px;
+    }
+
+    .calendar-icon {
+        width: 18px;
+        height: 18px;
+    }
+}
+
+#info-page {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: #f4d8e6;
+    z-index: 10000; /* Musí být nad vším */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    overflow-y: auto; /* Kdyby bylo textu hodně, půjde scrollovat */
+    justify-content: flex-start; /* Začne nahoře, aby se dalo scrollovat dolů */
+    text-align: center;
+    box-sizing: border-box; /* Zajistí, že padding "nevyfoukne" stránku do stran */
+}
+
+
+.info-title {
+    font-family: 'Great Vibes', cursive;
+    font-size: 2.5rem;
+    color: black;
+    font-weight: normal;
+    margin-top: 40px;
+    margin-bottom: 20px;
+}
+
+.info-titlet {
+    font-family: 'Great Vibes', cursive;
+    font-size: 2rem;
+    color: black;
+    font-weight: normal;
+}
+
+.info-subtitle {
+    font-family: 'Great Vibes', cursive; /* Stejné ozdobné písmo */
+    display: table;
+    font-size: 2rem;
+    color: #000;
+    font-weight: normal;
+    background-color: #fceef2; /* Růžové pozadí štítku */
+    padding: 8px 30px; /* Prostor kolem textu */
+    border: 1px solid rgba(0,0,0,0.1);
+    border-radius: 20px; /* Kulaté rohy */
+    /* MAGICKÁ ČÁST: Posunutí a vrstvení */
+    margin: 0 auto -20px auto; /* Záporných -20px ho posadí na hranu boxu pod ním */
+    margin-top: 40px;
+    position: relative; /* Aby fungoval z-index */
+    z-index: 2; /* Aby byl nad bílým boxem */
+    /* Zrušíme ty čáry a stíny, co jsme tam měli předtím */
+    border-bottom: 1px solid rgba(0,0,0,0.1);
+    box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+}
+
+.info-subtitlet {
+    font-family: 'Great Vibes', cursive; /* Stejné ozdobné písmo */
+    display: table;
+    font-size: 2rem;
+    color: #000;
+    font-weight: normal;
+    padding: 8px 30px; /* Prostor kolem textu */
+    position: relative; /* Aby fungoval z-index */
+}
+
+/* Kontejner pro volnou sekci */
+.info-section {
+    width: 100%;
+    max-width: 320px;
+    margin: 40px auto;
+    padding: 0 10px;
+}
+
+/* Elegantní nadpis bez růžového pozadí */
+.info-title-airy {
+    font-family: 'Great Vibes', cursive;
+    font-size: 2.2rem;
+    color: #000;
+    margin-bottom: 15px;
+    display: block;
+    /* Jemná linka pod nadpisem, která se ztrácí do stran */
+    background: linear-gradient(to right, transparent, rgba(0,0,0,0.1), transparent);
+    background-size: 100% 1px;
+    background-repeat: no-repeat;
+    background-position: bottom;
+    padding-bottom: 10px;
+}
+
+/* Styl textu v těchto sekcích */
+.info-text-airy {
+    font-family: 'Archivo Narrow', sans-serif;
+    font-size: 1.05rem;
+    line-height: 1.6;
+    color: #444;
+}
+
+/* Zvýraznění tipu o snídani */
+.morning-tip {
+    font-style: italic;
+    color: #d27285;
+    margin-top: 15px;
+    font-size: 0.95rem;
+}
+
+/* Styl pro kolečka barev u dresscodu */
+.dresscode-colors {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin: 15px 0;
+}
+
+.color-dot {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    border: 1px solid rgba(0,0,0,0.05);
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+}
+
+
+.info-content {
+    font-family: 'Archivo Narrow', sans-serif;
+    text-align: center;
+    font-size: 1.1rem;
+    line-height: 1.2;
+    width: 100%; /* Roztažení na dostupnou šířku */
+    max-width: 300px; /* Aby text nebyl na širokých mobilech moc roztažený */
+    margin: 0 auto; /* Pojistka pro vycentrování bloku */
+    color: black;
+}
+
+.info-content p {
+    margin: 8px 0;
+    width: 100%;
+}
+
+/* Kontejner pro cik-cak bloky */
+.info-block {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin: 20px 0;
+    width: 100%;
+}
+
+    /* Blok vlevo (text vlevo, ikona vpravo) */
+    .info-block.left {
+        text-align: left;
+        justify-content: flex-start;
+    }
+
+    /* Blok vpravo (ikona vlevo, text vpravo) */
+    .info-block.right {
+        text-align: right;
+        justify-content: flex-end;
+    }
+
+/* Styl pro samotný text uvnitř bloku */
+.info-text {
+    flex: 1; /* Aby text zabral maximum místa */
+}
+
+    .info-text p {
+        margin: 0 !important; /* Zrušíme mezery u odstavců uvnitř bloku */
+    }
+
+/* Styl pro ikony */
+.info-icon {
+    font-size: 2.5rem; /* Velikost ikonky */
+    flex-shrink: 0;
+}
+
+
+/* Styl pro mapový odkaz, aby se nepletl */
+.map-link {
+    color: #234dda;
+    font-size: 0.85rem;
+    text-decoration: underline;
+    display: inline-block;
+    margin-top: 2px;
+}
+
+/* Hlavní ohraničený box - TADY JE TEN ČTVEREC */
+.schedule-box {
+    width: 100%;
+    max-width: 380px;
+    margin: 0 auto 30px auto; /* Horní margin na 0 */
+    background: white;
+    border: 1px solid rgba(0,0,0,0.1);
+    border-radius: 10px;
+    padding: 30px 10px 10px 10px; /* Větší horní padding, aby text nezačínal pod štítkem */
+    box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+    position: relative;
+    z-index: 1;
+}
+
+ .schedule-box .schedule-item:first-of-type {
+    padding-top: 10px; /* Snížíme horní padding u prvního řádku (obřadu) */
+ }
+
+/* Styl pro jeden řádek události */
+.schedule-item {
+    display: flex; /* Udělá sloupcový vzhled: čas - text */
+    align-items: flex-start; /* Čas bude nahoře u textu */
+    gap: 15px; /* Mezera mezi časem a textem */
+    padding: 20px 10px; /* Mezery uvnitř řádku */
+    border-bottom: 1px solid rgba(0,0,0,0.05); /* Linka mezi řádky */
+}
+
+    /* Smaže spodní linku u posledního řádku */
+    .schedule-item:last-child {
+        border-bottom: none;
+    }
+
+/* Sloupec s časem (Levá strana) */
+.schedule-time {
+    font-family: 'Great Vibes', cursive;
+    font-size: 1.8rem;
+    color: black;
+    width: 70px; /* Pevná šířka pro čas, aby text vedle začínal ve stejné rovině */
+    text-align: center; /* Vycentruje čas na střed sloupce */
+    padding-top: 5px; /* Pojistka pro vertikální zarovnání */
+    white-space: nowrap; /* Aby se čas 13:00 nezalomil */
+}
+
+/* Sloupec s textem (Pravá strana) */
+.schedule-text {
+    flex: 1; /* Zabere maximum místa */
+    text-align: left; /* Jako na fotce */
+}
+
+    /* Nadpis události (Svatební obřad) */
+    .schedule-text h4 {
+        font-family: 'Great Vibes', cursive; /* Použijeme ozdobné písmo */
+        font-size: 1.6rem;
+        font-weight: 400;
+        margin: 0;
+        color: black;
+    }
+
+    /* Text pod nadpisem (Kde:...) */
+    .schedule-text p {
+        font-family: 'Archivo Narrow', sans-serif;
+        font-size: 1rem;
+        line-height: 1.4;
+        margin: 2px 0 0 0 !important; /* Minimalizuje mezery */
+        color: #444; /* Jemnější barva pro popis */
+    }
+
+    /* Odkaz na mapy v tomto stylu */
+    .schedule-text .map-link {
+        display: inline-block;
+        color: #234dda;
+        font-size: 0.8rem;
+        text-decoration: underline;
+        margin-top: 2px;
+    }
+
+/* Úprava pro dary */
+.schedule-item.gifts .schedule-time {
+    font-size: 2.2rem;
+    color: rgba(0,0,0,0.5);
+}
+
+/* Ostatní text pod ohraničením */
+.info-content-bottom {
+    font-family: 'Archivo Narrow', sans-serif;
+    font-size: 1.05rem;
+    line-height: 1.6;
+    margin-top: 30px;
+    padding: 0 20px;
+}
+
+
+#rsvp-form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    margin-top: 10px;
+    padding-bottom: 30px;
+}
+
+.rsvp-input {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid rgba(0,0,0,0.3);
+    background: transparent;
+    border-radius: 10px;
+    font-family: 'Archivo Narrow', sans-serif;
+    color: #2d2d2d;
+    box-sizing: border-box !important;
+    margin: 5px 0;
+    font-weight: normal;
+}
+
+.rsvp-radio-group {
+    display: flex;
+    justify-content: space-around;
+    font-family: 'Archivo Narrow', sans-serif;
+    color: #2d2d2d;
+    font-size: 0.9rem;
+}
+
+.rsvp-radio-group label {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    cursor: pointer;
+}
+
+/* Tlačítko zpět - dáme mu trochu prostor nahoře, aby se nelepilo na RSVP */
+.back-btn {
+    margin-top: 30px;
+    margin-bottom: 50px; /* Extra místo dole, aby se dalo doscrolovat */
+    flex-shrink: 0; /* Zabráni tlačítku, aby se "smrsklo" */
+}
+
+/* Kontejner pro obrázek s přechodem */
+.fade-image-wrapper {
+    position: relative;
+    width: 100%;
+    min-height: 200px;
+    margin: -30px auto;
+    margin-bottom: 10px;
+    overflow: hidden; /* Pojistka */
+}
+
+/* Samotný obrázek */
+.fade-image {
+    width: 100%;
+    height: auto;
+    display: block;
+    border-radius: 10px; /* Volitelné: jemně zaoblené rohy, ladí s formulářem */
+    /* MAGICKÁ ČÁST: Plynulý přechod do ztracena nahoře */
+    -webkit-mask-image: linear-gradient(to top, rgba(0,0,0,1) 20%, rgba(0,0,0,0) 100%);
+    mask-image: linear-gradient(to top, rgba(0,0,0,1) 50%, rgba(0,0,0,0) 100%);
+}
+
+

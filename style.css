@@ -690,7 +690,7 @@ canvas {
     margin-top: 30px;
 }
 
-
+/* 1. Samotný kontejner formuláře - musí dovolit kytkám vykouknout ven */
 #rsvp-form {
     display: flex;
     flex-direction: column;
@@ -698,51 +698,53 @@ canvas {
     width: 90%;
     max-width: 380px;
     margin: 40px auto !important;
-    border: 1px solid rgba(0,0,0,0.1); /* Tenká linka */
-    border-radius: 15px; /* Tady budou fungovat ty kulaté rohy */
+    border: 1px solid rgba(0,0,0,0.1);
+    border-radius: 15px;
     padding: 30px 20px;
-    position: relative; /* Důležité pro ty kytky v rozích */
+    position: relative;
+    z-index: 1; /* Základní vrstva */
+    overflow: visible; /* DŮLEŽITÉ: aby kytky mohly až k okraji displeje */
 }
 
-#rsvp-form h3 {
-    font-family: 'Great Vibes', cursive;
-    color: #000000;
-    font-weight: normal;
-    font-size: 2.2rem;     /* Zvětšený nadpis */
-    margin: 10px 0 20px 0;
-    position: relative;    /* Nutné pro umístění květů */
-    display: block;
-    width: 100%;
-    text-align: center;
-}
+    /* 2. Společný základ pro kytky v pozadí formuláře */
+    #rsvp-form::before,
+    #rsvp-form::after {
+        content: "";
+        position: absolute;
+        width: 200px; /* Velikost kytky */
+        height: 200px;
+        background-size: contain;
+        background-repeat: no-repeat;
+        opacity: 0.35; /* Jemná průhlednost, aby nerušily vstupy do formuláře */
+        z-index: -1; /* Šoupne je pod formulář a text */
+        pointer-events: none;
+        top: -20px; /* Pozice kousek nad horní hranu boxu */
+    }
 
-/* Květina VLEVO */
-#rsvp-form h3::before {
-    content: "";
-    position: absolute;
-    left: -20px;          /* Posune květ blíž ke kraji boxu */
-    top: 1%;
-    transform: translateY(-50%); /* Vycentruje svisle na střed textu */
-    width: 100px;          /* Větší velikost, jak jsi chtěla */
-    height: 100px;
-    background: url('kvety.png') no-repeat center;
-    background-size: contain;
-    pointer-events: none; /* Aby kytka nebránila klikání */
-}
+    /* Kytka VLEVO - vystřelená k okraji */
+    #rsvp-form::before {
+        background-image: url('kvety.png');
+        left: -60px; /* Posun vlevo mimo bílý box */
+    }
 
-/* Květina VPRAVO */
-#rsvp-form h3::after {
-    content: "";
-    position: absolute;
-    right: -20px;          /* Posune květ blíž ke kraji boxu */
-    top: 1%;
-    transform: translateY(-50%); /* Vycentruje svisle na střed textu */
-    width: 100px;          /* Větší velikost, jak jsi chtěla */
-    height: 100px;
-    background: url('kvety_prava.png') no-repeat center;
-    background-size: contain;
-    pointer-events: none; /* Aby kytka nebránila klikání */
-}
+    /* Kytka VPRAVO - vystřelená k okraji */
+    #rsvp-form::after {
+        background-image: url('kvety_prava.png');
+        right: -60px; /* Posun vpravo mimo bílý box */
+    }
+
+    /* 3. Úprava nadpisu, aby ho kytky neodtlačovaly */
+    #rsvp-form h3 {
+        font-family: 'Great Vibes', cursive;
+        color: #000000;
+        font-weight: normal;
+        font-size: 2.2rem;
+        margin: 10px 0 20px 0;
+        text-align: center;
+        position: relative;
+        z-index: 2; /* Nadpis bude jasně nad kytkami */
+    }
+
 
 
 .rsvp-input {
@@ -801,4 +803,43 @@ canvas {
     mask-image: linear-gradient(to top, rgba(0,0,0,1) 50%, rgba(0,0,0,0) 100%);
 }
 
+/* Kontejner, který drží instrukce - teď slouží jako mantinel pro kytky */
+.relative-title {
+    position: relative;
+    width: 100%;
+    overflow: visible; /* Důležité: dovolí kytkám vykouknout ven z boxu */
+    z-index: 1;
+}
+
+    /* Společný základ pro růže u krajů */
+    .relative-title::before,
+    .relative-title::after {
+        content: "";
+        position: absolute;
+        width: 300px; /* Větší rozměr, aby růže byla výrazná */
+        height: 300px;
+        background-size: contain;
+        background-repeat: no-repeat;
+        opacity: 0.3; /* Jemná průhlednost, aby text zůstal čitelný */
+        z-index: -1; /* Šoupne růži dospod pod všechen text */
+        pointer-events: none; /* Kliknutí projdou skrz růži na odkazy/text */
+        top: 0px; /* Pozice odshora - uprav podle potřeby */
+    }
+
+    /* Růže vlevo - přilepená na úplný levý okraj obrazovky */
+    .relative-title::before {
+        background-image: url('kvet.png'); /* Tvůj název souboru */
+        left: -150px; /* Pokud chceš, aby kousek růže "vyčníval" ven z displeje */
+    }
+
+    /* Růže vpravo - přilepená na úplný pravý okraj obrazovky */
+    .relative-title::after {
+        background-image: url('kvet_vpravo.png'); /* Tvůj název souboru */
+        right: -150px; /* Pokud chceš, aby kousek růže "vyčníval" ven z displeje */
+    }
+
+/* Pojistka pro mobil: aby růže nezpůsobily vodorovné posouvání stránky */
+body {
+    overflow-x: hidden;
+}
 

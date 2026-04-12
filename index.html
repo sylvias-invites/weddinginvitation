@@ -27,8 +27,23 @@
     <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&display=block" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Archivo+Narrow:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Saira+Condensed:wght@300;400;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="style.css?v=5.999">
+    <link rel="stylesheet" href="style.css?v=6.999">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+    <script>
+        // Počkáme, až se načtou všechna písma, než zobrazíme tělo stránky
+        document.fonts.ready.then(function () {
+            document.body.style.visibility = "visible";
+        });
+    </script>
+
+    <style>
+        /* Na začátku tělo skryjeme */
+        body {
+            visibility: hidden;
+        }
+    </style>
+
 </head>
 <body>
 
@@ -70,6 +85,19 @@
         </div>
 
         <p id="instruction">Setřete srdíčko</p>
+
+        <div id="calendar-wrapper" class="hidden">
+            <a href="javascript:void(0)" class="calendar-btn" onclick="showInfo()">
+                <div class="calendar-icon">i</div>
+                <span>Pro další informace klikněte sem</span>
+            </a>
+
+            <a href="javascript:void(0)" class="calendar-btn" onclick="addToCalendar()">
+                <div class="calendar-icon">666</div>
+                <span>Přidat do kalendáře</span>
+            </a>
+        </div>
+
 
         <div id="info-page" class="hidden">
             <div class="side-flowers left"></div>
@@ -165,9 +193,28 @@
                             <div class="color-dot" style="background: #39b0be;"></div>
                             <div class="color-dot" style="background: #e0ef5c;"></div>
                             <div class="color-dot" style="background: #a19f9f;"></div>
+
                         </div>
-                        <p><small>Budeme rádi, když se sladíte s námi, ale hlavní je pohodlí.</small></p>
                     </div>
+
+                    <div class="dresscode-container">
+                        <div class="dress-item item-left">
+                            <div class="dress-note">
+                                Obleky, smart casual pro muže
+                                <img src="sipka_doleva.png" class="arrow arrow-left" alt="šipka">
+                            </div>
+                            <img src="muzi.png" class="dress-img" alt="Pánský dresscode">
+                        </div>
+
+                        <div class="dress-item item-right">
+                            <img src="zeny.png" class="dress-img" alt="Dámský dresscode">
+                            <div class="dress-note">
+                                <img src="sipka_doprava.png" class="arrow arrow-right" alt="šipka">
+                                Dlouhé a elegantní šaty pro ženy
+                            </div>
+                        </div>
+                    </div>
+
                 </div>
                 <div><hr class="fade-divider"></div>
 
@@ -193,24 +240,45 @@
 
 
             </div>
-            <button onclick="backToInvite()" class="calendar-btn back-btn" style="margin-top: 20px;">Zpět na pozvánku</button>
-        </div>
+            <button onclick="showPhotoPage()" class="calendar-btn" style="background: #d27285">
+                Pokračovat na další stránku
+            </button>
 
-        <div id="calendar-wrapper">
-            <a href="javascript:void(0)" class="calendar-btn" onclick="showInfo()">
-                <div class="calendar-icon">i</div>
-                <span>Pro další informace klikněte sem</span>
-            </a>
+            <button onclick="backToInvite()" class="calendar-btn back-btn">Zpět na pozvánku</button>
 
-            <a href="javascript:void(0)" class="calendar-btn" onclick="addToCalendar()">
-                <div class="calendar-icon">666</div>
-                <span>Přidat do kalendáře</span>
-            </a>
+        </div> <div id="photo-page" class="hidden">
+                   <div class="info-content">
+
+                       <h2 class="info-titlet">Do svatby zbývá:</h2>
+                       <div class="countdown-container_two" style="display: flex; justify-content: center; gap: 12px; margin-top: 5px; font-family: 'Montserrat', sans-serif;">
+                           <div style="text-align: center; min-width: 45px;">
+                               <span class="days-val" style="display: block; font-size: 1.4rem; font-weight: bold; color: #d27285;">00</span>
+                               <small style="font-size: 0.6rem; text-transform: uppercase; color: #666;">Dní</small>
+                           </div>
+                           <div style="text-align: center; min-width: 45px;">
+                               <span class="hours-val" style="display: block; font-size: 1.4rem; font-weight: bold; color: #d27285;">00</span>
+                               <small style="font-size: 0.6rem; text-transform: uppercase; color: #666;">Hod</small>
+                           </div>
+                           <div style="text-align: center; min-width: 45px;">
+                               <span class="minutes-val" style="display: block; font-size: 1.4rem; font-weight: bold; color: #d27285;">00</span>
+                               <small style="font-size: 0.6rem; text-transform: uppercase; color: #666;">Min</small>
+                           </div>
+                           <div style="text-align: center; min-width: 45px;">
+                               <span class="seconds-val" style="display: block; font-size: 1.4rem; font-weight: bold; color: #d27285;">00</span>
+                               <small style="font-size: 0.6rem; text-transform: uppercase; color: #666;">Sek</small>
+                           </div>
+                       </div>
+
+                       <div class="photo-container">
+                           <img src="savethedate.jpg" alt="Naše fotka">
+                       </div>
+                   </div>
+
+            <button onclick="closePhotoPage()" class="calendar-btn back-btn" style="margin-top: 40px; margin-bottom: 40px;">Zpět k informacím</button>
         </div>
 
         <div id="confetti-container"></div>
     </div>
-
-    <script src="script.js?v=2.88"></script>
+    <script src="script.js?v=4.88"></script>
 </body>
 </html>

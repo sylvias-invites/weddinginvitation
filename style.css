@@ -20,7 +20,7 @@ body {
 .screen {
     width: 100%;
     max-width: 500px;
-    height: 100dvh; /* dvh lépe sedí na mobily */
+    min-height: 100dvh; /* dvh lépe sedí na mobily */
     background: #f4d8e6;
     margin: 0 auto;
     padding: 10px; /* Zrušíme padding-top: 10vh a dáme rovnoměrný okraj */
@@ -46,6 +46,8 @@ h1 {
     margin-top: 0;
     margin-bottom: 10px;
     padding: 0 10px;
+    min-height: 1.2em; /* REZERVACE MÍSTA: zabrání posunu při načtení fontu */
+    line-height: 1.2;
 }
 
 
@@ -111,6 +113,7 @@ h1 {
     background: transparent !important;
     opacity: 0;
     transition: opacity 0.5s ease;
+    contain: layout size; /* Pomůže prohlížeči držet místo pro srdce */
 }
 
     .heart-wrapper.ready {
@@ -167,21 +170,23 @@ h1 {
     display: none;
 }
 
-/* Obal pro celou řadu v záhlaví */
 .header-row {
     display: flex;
     align-items: center;
     justify-content: center;
     gap: 15px;
-    width: fit-content;
-    margin: 5px auto 15px auto;
-    /* ZRUŠÍME OHRANIČENÍ A STÍN KOLEM DOKOLA */
+    width: fit-content; /* Zůstane jen tak široký, jak je text */
+    margin: 15px auto 25px auto; /* Trochu víc místa kolem */
+
+    padding-bottom: 8px; /* Mezera mezi textem a tou linkou */
+    /* MAGICKÁ ČÁRA DO ZTRACENA */
+    background-image: linear-gradient(to right, transparent, rgba(0,0,0,0.2) 50%, transparent);
+    background-position: bottom center;
+    background-repeat: no-repeat;
+    background-size: 80% 1px; /* Čára bude zabírat jen 80% šířky textu a bude 1px vysoká */
+
     box-shadow: none !important;
-    border-radius: 0;
-    /* PŘIDÁME JEMNOU LINKU, KTERÁ MÁ POD SEBOU STÍN */
-    padding-bottom: 3px; /* Mezera mezi textem a linkou */
-    border-bottom: 1px solid rgba(0,0,0,0.05); /* Skoro neviditelná linka */
-    /* A pod tu linku dáme velmi jemný "glow" efekt směrem dolů */
+    border-bottom: none !important; /* Zrušíme tu původní čáru přes celý mobil */
 }
 
 /* Styl pro texty (iniciály a datum) */
@@ -302,23 +307,72 @@ canvas {
 
 /*Kalendář tlačítko*/
 
+/* Hlavní kontejner fotostránky */
+#photo-page {
+    position: absolute; /* Stejné jako #info-page */
+    top: 0;
+    left: 0;
+    width: 100%;
+    min-height: 100vh;
+    background: #f4d8e6;
+    z-index: 10001; /* O stupínek nad info-page, aby ji překryla */
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding: 0; /* Padding si řeší vnitřní info-content */
+}
+
+    /* Když není skrytá, vynutíme flex */
+    #photo-page:not(.hidden) {
+        display: flex !important;
+    }
+
+.photo-container {
+    width: 100%;
+    max-width: 380px; /* Stejná šířka jako tvůj schedule-box */
+    margin: -30px auto;
+}
+
+/* Samotná fotka */
+.photo-container img {
+    width: 100%;
+    height: auto;
+    display: block;
+    border-radius: 10px 10px 0 0; /* Volitelné: jemně zaoblené rohy, ladí s formulářem */
+    /* MAGICKÁ ČÁST: Plynulý přechod do ztracena nahoře */
+    -webkit-mask-image: linear-gradient(to top, rgba(0,0,0,1) 50%, rgba(0,0,0,0) 100%);
+    mask-image: linear-gradient(to top, rgba(0,0,0,1) 60%, rgba(0,0,0,0) 100%);
+}
+
+/* Kontejner pro tlačítka pod fotkou */
+#photo-buttons-area {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+    margin-top: 10px;
+    padding-bottom: 40px;
+}
+
+
 #calendar-wrapper {
     position: absolute;
     display: flex !important;
-    flex-direction: column !important; /* Tlačí je pod sebe */
-    gap: 15px !important; /* Mezera mezi tlačítky */
-    bottom: 5vh; /* Zkus to dát trochu výš od spodku */
+    flex-direction: column !important;
+    gap: 15px !important;
+    bottom: 5vh;
     left: 50%;
     transform: translateX(-50%);
     opacity: 0;
     visibility: hidden;
     transition: opacity 1s ease 1s, visibility 1s ease 1s;
-    z-index: 9999 !important; /* Maximální priorita */
-    width: auto; /* Změna z 100% na auto, aby se lépe klikalo */
-    white-space: nowrap;
-    pointer-events: none;
-    width: 90%; /* Aby se na mobilu roztáhla podle potřeby */
+    z-index: 9999 !important;
+    width: 90%;
     max-width: 320px;
+    pointer-events: none;
 }
 
     #calendar-wrapper.visible {
@@ -350,13 +404,38 @@ canvas {
     border-radius: 30px; /*zaoblení rohů*/
     /*font-weight: bold;*/
     box-shadow: 0 4px 15px rgba(0,0,0,0.3);
-    min-width: 220px; /* Aby byla obě tlačítka stejně široká */
+    width: 90% !important; /* Vyplní šířku wrapperu */
+    min-width: 180px; /* Aby byla obě tlačítka stejně široká */
     pointer-events: auto !important; /* POJISTKA: Aby na to šlo kliknout */
 }
 
     .calendar-btn:active {
         transform: scale(0.95);
     }
+
+
+#photo-page #calendar-wrapper {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important; /* Vycentruje je na osu */
+    gap: 15px !important;
+    margin: 30px auto !important;
+    /* PŘEPISOVÁNÍ PŘEDCHOZÍCH CHYB */
+    position: relative !important;
+    left: auto !important;
+    transform: none !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+    width: auto !important; /* DŮLEŽITÉ: Neroztahuj se přes celou šířku! */
+    pointer-events: auto !important;
+}
+
+#photo-page .calendar-btn {
+    width: 280px !important; /* Pevná šířka, aby nebyla roztažená */
+    min-width: 280px !important;
+    max-width: 280px !important;
+    margin: 0 auto !important;
+}
 
 .hidden {
     display: none;
@@ -415,6 +494,7 @@ canvas {
         height: 18px;
     }
 }
+
 
 /* OPRAVA PRO POSTRANNÍ KYTKY 
 .side-flowers {
@@ -513,8 +593,8 @@ canvas {
 }
 
 .info-titlett {
-    font-family: 'Montserrat', sans-serif;
-    font-size: 0.9rem;
+    font-family: 'Archivo Narrow', sans-serif;
+    font-size: 1rem;
     color: black;
     font-weight: normal;
     margin-top: 0;
@@ -536,7 +616,7 @@ canvas {
     border: 1px solid rgba(0,0,0,0.1);
     border-radius: 20px; /* Kulaté rohy */
     /* MAGICKÁ ČÁST: Posunutí a vrstvení */
-    margin: 0 auto -20px auto; /* Záporných -20px ho posadí na hranu boxu pod ním */
+    margin: 0 auto -30px auto; /* Záporných -20px ho posadí na hranu boxu pod ním */
     margin-top: 40px;
     position: relative; /* Aby fungoval z-index */
     z-index: 2; /* Aby byl nad bílým boxem */
@@ -582,11 +662,10 @@ canvas {
 .info-text-airy {
     font-family: 'Archivo Narrow', sans-serif;
     font-size: 1.05rem;
-    line-height: 1.6;
     color: #444;
     line-height: 1.1; /* Volitelné: přitáhne řádky ještě blíž k sobě */
-    padding-left: 70px; /* Odsazení zleva */
-    padding-right: 70px; /* Odsazení zprava */
+    padding-left: 90px; /* Odsazení zleva */
+    padding-right: 90px; /* Odsazení zprava */
     margin-top: 0;
     margin-bottom: 10px; /* Mezera mezi jednotlivými odstavci textu */
 }
@@ -695,7 +774,7 @@ canvas {
 
 /* Hlavní ohraničený box - TADY JE TEN ČTVEREC */
 .schedule-box {
-    width: 90%; /* Místo 100% dáme 90%, aby měl box po stranách fuky */
+    width: 70%; /* Místo 100% dáme 90%, aby měl box po stranách fuky */
     max-width: 380px;
     margin: 20px auto !important; /* Toto ho vycentruje vodorovně */
     background: white;
@@ -784,21 +863,80 @@ canvas {
     margin-top: 30px;
 }
 
-/* 1. Samotný kontejner formuláře - musí dovolit kytkám vykouknout ven */
-#rsvp-form {
+
+.dresscode-container {
     display: flex;
     flex-direction: column;
-    gap: 15px;
-    width: 90%;
-    max-width: 380px;
-    margin: 40px auto !important;
-    border: 1px solid rgba(0,0,0,0.1);
-    border-radius: 15px;
-    padding: 30px 20px;
-    position: relative;
-    z-index: 1; /* Základní vrstva */
-    overflow: visible; /* DŮLEŽITÉ: aby kytky mohly až k okraji displeje */
+    gap: 40px;
+    padding: 20px;
+    max-width: 450px;
+    margin: 0 auto;
 }
+
+.dress-item {
+    display: flex;
+    align-items: center;
+    position: relative;
+}
+
+.dress-img {
+    width: 200px; /* Uprav podle potřeby */
+    height: auto;
+    border-radius: 15px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
+
+/* Styl pro ručně psaný text */
+.dress-note {
+    font-family: 'Archivo Narrow', sans-serif; /* Nebo jiný ozdobný font */
+    font-size: 0.9rem;
+    line-height: 1.1;
+    color: #444;
+    position: relative;
+    width: 120px;
+    padding: 10px;
+}
+
+/* Nastavení šipek */
+.arrow {
+    position: absolute;
+    width: 60px;
+    height: auto;
+    opacity: 0.6;
+}
+
+.arrow-left {
+    bottom: -40px;
+    right: 10px;
+    transform: rotate(10deg);
+}
+
+.arrow-right {
+    top: -40px;
+    left: 5px;
+    transform: rotate(-15deg);
+}
+
+/* Zarovnání bloků */
+.item-left {
+    justify-content: flex-end;
+}
+
+.item-right {
+    justify-content: flex-start;
+}
+
+@media (max-width: 480px) {
+    .dress-img {
+        width: 160px;
+    }
+
+    .dress-note {
+        font-size: 1rem;
+        width: 100px;
+    }
+}
+
 
 /* Bílý box s formulářem */
 .google-form-box {
@@ -822,7 +960,7 @@ canvas {
     position: relative;
     width: 90%;
     max-width: 380px; /* Tímto nastavíš šířku jako u původního form */
-    margin: 60px auto !important; /* Vycentruje box a dá mu místo shora/zdola */
+    margin: 100px auto 60px auto !important; /* Vycentruje box a dá mu místo shora/zdola */
     overflow: visible; /* Důležité: aby kytky mohly vykouknout ven */
 }
 
@@ -830,26 +968,21 @@ canvas {
 .rsvp-outer-container::after {
     content: "";
     position: absolute;
-    width: 250px;
-    height: 180px;
+    width: 580px;
+    height: 370px;
     background-size: contain;
     background-position: center;
     background-repeat: no-repeat;
-    opacity: 0.8;
+    opacity: 0.88;
     z-index: 10; /* Kytky budou nahoře */
     pointer-events: none; /* Proklikneš skrz ně na formulář */
 }
 
 .rsvp-outer-container::before {
     background-image: url('kvet_nahoru.png');
-    top: -110px; /* Posun vlevo mimo box */
-    left: -10%; /* Vycentrování vodorovně */
-}
-
-.rsvp-outer-container::after {
-    background-image: url('kvet_nahoru.png');
-    bottom: -30px; /* Posun vpravo mimo box */
-    right: -10%; /* Vycentrování vodorovně */
+    top: -175px; /* Posun vlevo mimo box */
+    left: 50%;
+    transform: translateX(-50%); /* Toto kytku dokonale vycentruje */
 }
 
 .form-flower-overlay {
@@ -872,7 +1005,7 @@ canvas {
         height: 150px;
         background-size: contain;
         background-repeat: no-repeat; /* Zabrání tomu "řetězení" růží */
-        opacity: 1;
+        opacity: 1.1;
         z-index: 1000;
         top: -30px; /* Posun k hornímu okraji */
         pointer-events: none;
@@ -900,12 +1033,6 @@ canvas {
     z-index: 5;
 }
 
-/* Styl nadpisu uvnitř boxu */
-#rsvp-form h3 {
-    margin: 20px 0 10px 0;
-    font-size: 2.2rem;
-}
-
 /* Stín pod formulářem */
 .form-shadow {
     width: 90%;
@@ -914,19 +1041,6 @@ canvas {
     border-radius: 50%;
     margin: -20px auto 0 auto;
     filter: blur(10px);
-}
-
-.rsvp-input {
-    width: 100%;
-    padding: 10px;
-    border: 1px solid rgba(0,0,0,0.3);
-    background: transparent;
-    border-radius: 10px;
-    font-family: 'Archivo Narrow', sans-serif;
-    color: #2d2d2d;
-    box-sizing: border-box !important;
-    margin: 5px 0;
-    font-weight: normal;
 }
 
 .rsvp-radio-group {
@@ -988,8 +1102,8 @@ canvas {
     .relative-title::after {
         content: "";
         position: absolute;
-        width: 300px; /* Větší rozměr, aby růže byla výrazná */
-        height: 300px;
+        width: 290px; /* Větší rozměr, aby růže byla výrazná */
+        height: 290px;
         background-size: contain;
         background-repeat: no-repeat;
         opacity: 0.6; /* Jemná průhlednost, aby text zůstal čitelný */
@@ -1001,16 +1115,18 @@ canvas {
     /* Růže vlevo - přilepená na úplný levý okraj obrazovky */
     .relative-title::before {
         background-image: url('kvet.png'); /* Tvůj název souboru */
-        left: -140px; /* Pokud chceš, aby kousek růže "vyčníval" ven z displeje */
+        left: -120px; /* Pokud chceš, aby kousek růže "vyčníval" ven z displeje */
     }
 
     /* Růže vpravo - přilepená na úplný pravý okraj obrazovky */
     .relative-title::after {
         background-image: url('kvet_vpravo.png'); /* Tvůj název souboru */
-        right: -140px; /* Pokud chceš, aby kousek růže "vyčníval" ven z displeje */
+        right: -120px; /* Pokud chceš, aby kousek růže "vyčníval" ven z displeje */
     }
 
 /* Pojistka pro mobil: aby růže nezpůsobily vodorovné posouvání stránky */
 body {
     overflow-x: hidden;
 }
+
+

@@ -385,8 +385,7 @@ function startCountdown() {
 
         if (diff < 0) {
             clearInterval(timerInterval);
-            // Pokud vyprší čas, vypíšeme zprávu do všech countdown kontejnerů
-            document.querySelectorAll("#countdown, .countdown-container").forEach(el => {
+            document.querySelectorAll("#countdown, .countdown-container, .countdown-container_two").forEach(el => {
                 el.innerHTML = "<span style='color:#b8860b; font-size:1.2rem;'>Dnes je náš den! 💕</span>";
             });
             return;
@@ -397,7 +396,7 @@ function startCountdown() {
         const m = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
         const s = Math.floor((diff % (1000 * 60)) / 1000);
 
-        // Zápis do prvního odpočtu (ID)
+        // 1. Aktualizace hlavní stránky (ID jsou unikátní)
         const d1 = document.getElementById("days");
         const h1 = document.getElementById("hours");
         const m1 = document.getElementById("minutes");
@@ -408,19 +407,80 @@ function startCountdown() {
         if (m1) m1.innerText = m.toString().padStart(2, '0');
         if (s1) s1.innerText = s.toString().padStart(2, '0');
 
-        // Zápis do druhého odpočtu (Třídy na info stránce)
-        const d2 = document.querySelector(".days-val");
-        const h2 = document.querySelector(".hours-val");
-        const m2 = document.querySelector(".minutes-val");
-        const s2 = document.querySelector(".seconds-val");
-
-        if (d2) d2.innerText = d;
-        if (h2) h2.innerText = h.toString().padStart(2, '0');
-        if (m2) m2.innerText = m.toString().padStart(2, '0');
-        if (s2) s2.innerText = s.toString().padStart(2, '0');
+        // 2. Aktualizace VŠECH ostatních stránek (pomocí tříd)
+        // querySelectorAll najde všechny výskyty a .forEach je všechny naráz přepíše
+        document.querySelectorAll(".days-val").forEach(el => el.innerText = d);
+        document.querySelectorAll(".hours-val").forEach(el => el.innerText = h.toString().padStart(2, '0'));
+        document.querySelectorAll(".minutes-val").forEach(el => el.innerText = m.toString().padStart(2, '0'));
+        document.querySelectorAll(".seconds-val").forEach(el => el.innerText = s.toString().padStart(2, '0'));
 
     }, 1000);
 }
+
+// ... (ponech začátek se stíráním až po funkci revealEverything beze změny) ...
+
+function showInfo() {
+    const mainTitle = document.getElementById("main-title");
+    const initials = document.getElementById("initials");
+    const heart = document.querySelector(".heart-wrapper");
+    const instruction = document.getElementById("instruction");
+    const calendar = document.getElementById("calendar-wrapper");
+    const infoPage = document.getElementById("info-page");
+
+    // Skryjeme úvod
+    if (mainTitle) mainTitle.style.display = "none";
+    if (initials) initials.style.display = "none";
+    if (heart) heart.style.display = "none";
+    if (instruction) instruction.style.display = "none";
+    if (calendar) calendar.classList.add("hidden"); // Používáme třídu hidden
+
+    // Zobrazíme informační stránku
+    if (infoPage) {
+        infoPage.classList.remove("hidden");
+        window.scrollTo(0, 0);
+    }
+}
+
+function showPhotoPage() {
+    const infoPage = document.getElementById('info-page');
+    const photoPage = document.getElementById('photo-page');
+    const calendarWrapper = document.getElementById('calendar-wrapper');
+
+    // 1. Skryjeme info stránku
+    if (infoPage) infoPage.classList.add('hidden');
+
+    // 2. Skryjeme kalendář a info tlačítka (místo jejich přesouvání)
+    if (calendarWrapper) {
+        calendarWrapper.style.display = "none";
+    }
+
+    // 3. Zobrazíme fotostránku a srovnáme ji
+    if (photoPage) {
+        photoPage.classList.remove('hidden');
+        photoPage.style.display = "flex";
+        window.scrollTo(0, 0);
+    }
+}
+function closePhotoPage() {
+    const infoPage = document.getElementById('info-page');
+    const photoPage = document.getElementById('photo-page');
+
+    // Schováme fotky, ukážeme info
+    if (photoPage) photoPage.classList.add('hidden');
+    if (infoPage) {
+        infoPage.classList.remove('hidden');
+        window.scrollTo(0, 0);
+    }
+    // calendar-wrapper necháváme schovaný, protože jsme na info stránce
+}
+
+function backToInvite() {
+    // Reload je nejjistější pro reset stíracího losu
+    location.reload();
+}
+
+// Spustit odpočet
+startCountdown();
 
 // Spustit hned
 startCountdown();

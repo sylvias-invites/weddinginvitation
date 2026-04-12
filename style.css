@@ -1,4 +1,4 @@
-﻿﻿@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap');
+﻿﻿﻿@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap');
 
 * {
     box-sizing: border-box;
@@ -34,13 +34,17 @@ body {
     overflow: hidden;
 }
 
+/* Nadpisy Great Vibes (ozdobné) */
+h1, h2.info-titlet, h3.info-subtitle, h3.info-title-airy, .initials, h4 {
+    font-family: 'Great Vibes', cursive !important;
+    font-weight: 400 !important;
+}
+
 h1 {
     color: black;
     font-size: 4.0rem; /* Zvětšeno pro mobil */
     margin-top: 0;
     margin-bottom: 10px;
-    font-family: 'Great Vibes', cursive;
-    font-weight: 400;
     padding: 0 10px;
 }
 
@@ -109,9 +113,9 @@ h1 {
     transition: opacity 0.5s ease;
 }
 
-.heart-wrapper.ready {
-    opacity: 1 !important;
-}
+    .heart-wrapper.ready {
+        opacity: 1 !important;
+    }
 
 #heart-background {
     position: absolute;
@@ -317,11 +321,11 @@ canvas {
     max-width: 320px;
 }
 
-#calendar-wrapper.visible {
-    opacity: 1 !important;
-    visibility: visible !important;
-    pointer-events: auto !important;
-}
+    #calendar-wrapper.visible {
+        opacity: 1 !important;
+        visibility: visible !important;
+        pointer-events: auto !important;
+    }
 
 .calendar-btn {
     display: flex !important;
@@ -350,9 +354,9 @@ canvas {
     pointer-events: auto !important; /* POJISTKA: Aby na to šlo kliknout */
 }
 
-.calendar-btn:active {
-    transform: scale(0.95);
-}
+    .calendar-btn:active {
+        transform: scale(0.95);
+    }
 
 .hidden {
     display: none;
@@ -412,8 +416,49 @@ canvas {
     }
 }
 
+/* OPRAVA PRO POSTRANNÍ KYTKY 
+.side-flowers {
+    position: fixed;
+    top: 50vh; /* Začnou v polovině obrazovky (pod fotkou)
+    bottom: 0;
+    width: 150px; /* ZVĚTŠENÍ: Tady si upravíš, jak moc mají být velké 
+    height: 100vh;
+    pointer-events: none;
+    z-index: 99999; /* Maximální vrstva 
+    opacity: 0.8;
+}
+
+.side-flowers.left {
+    left: -20px;
+    background-image: url('kvet.png');
+    background-repeat: repeat-y;
+    background-size: contain;
+    background-position: left top;
+}
+
+    .side-flowers.right {
+        right: -20px; /* NAMÁČKNUTÍ NA OKRAJ
+        background-image: url('kvet_vpravo.png');
+        background-repeat: repeat-y;
+        background-size: contain;
+        background-position: right top;
+    }
+
+/*Pokud jsou kytky moc blízko textu na mobilu, tohle ho trochu smrskne*/
+@media (max-width: 600px) {
+    .info-content, .header-row, .info-titlet {
+        padding-left: 0 !important; /* Zrušíme asymetrii */
+        text-align: center !important;
+        padding-right: 0 !important;
+        width: 100%; /* Necháme textu dýchat */
+        margin-left: auto !important;
+        margin-right: auto !important;
+    }
+}
+
 #info-page {
     position: absolute;
+    padding: 0 !important;
     top: 0;
     left: 0;
     width: 100%;
@@ -424,10 +469,22 @@ canvas {
     flex-direction: column;
     align-items: center;
     overflow-y: auto; /* Kdyby bylo textu hodně, půjde scrollovat */
+    overflow-x: hidden;
     justify-content: flex-start; /* Začne nahoře, aby se dalo scrollovat dolů */
     text-align: center;
     box-sizing: border-box; /* Zajistí, že padding "nevyfoukne" stránku do stran */
-    padding: 0;
+}
+
+
+/* Zajistíme, aby obsah byl nad kytkami */
+.info-content, .header-row, .info-titlet, .fade-image-wrapper, .countdown-container, .back-btn {
+    position: relative;
+    z-index: 2;
+}
+
+/* Vyčistíme staré okraje u boxů, aby kytky nebyly překryté bílou plochou, pokud ji tam máš */
+.schedule-box, #rsvp-form {
+    background: rgba(255, 255, 255, 0.8) !important; /* Poloprůhledné pozadí boxů, vypadá to luxusně */
 }
 
 
@@ -445,6 +502,27 @@ canvas {
     font-size: 2rem;
     color: black;
     font-weight: normal;
+    margin-top: 0;
+    margin-bottom: 0;
+    line-height: 1.5; /* Volitelné: přitáhne řádky ještě blíž k sobě */
+}
+
+/* Přidá mezeru jen nad ten úplně první nápis v bloku */
+.info-titlet:first-of-type {
+    margin-top: 20px; 
+}
+
+.info-titlett {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 0.9rem;
+    color: black;
+    font-weight: normal;
+    margin-top: 0;
+    margin-bottom: 0;
+    line-height: 1.5; /* Volitelné: přitáhne řádky ještě blíž k sobě */
+    padding-left: 40px; /* Odsazení zleva */
+    padding-right: 40px; /* Odsazení zprava */
+    box-sizing: border-box; /* Zajistí, že padding "nevyfoukne" šířku přes 100% */
 }
 
 .info-subtitle {
@@ -480,10 +558,10 @@ canvas {
 
 /* Kontejner pro volnou sekci */
 .info-section {
-    width: 100%;
-    max-width: 320px;
-    margin: 40px auto;
-    padding: 0 10px;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
 }
 
 /* Elegantní nadpis bez růžového pozadí */
@@ -491,14 +569,13 @@ canvas {
     font-family: 'Great Vibes', cursive;
     font-size: 2.2rem;
     color: #000;
-    margin-bottom: 15px;
+    margin-bottom: 5px;
     display: block;
     /* Jemná linka pod nadpisem, která se ztrácí do stran */
-    background: linear-gradient(to right, transparent, rgba(0,0,0,0.1), transparent);
     background-size: 100% 1px;
     background-repeat: no-repeat;
     background-position: bottom;
-    padding-bottom: 10px;
+    padding-bottom: 5px;
 }
 
 /* Styl textu v těchto sekcích */
@@ -507,6 +584,15 @@ canvas {
     font-size: 1.05rem;
     line-height: 1.6;
     color: #444;
+    line-height: 1.1; /* Volitelné: přitáhne řádky ještě blíž k sobě */
+    padding-left: 70px; /* Odsazení zleva */
+    padding-right: 70px; /* Odsazení zprava */
+    margin-top: 0;
+    margin-bottom: 10px; /* Mezera mezi jednotlivými odstavci textu */
+}
+
+.info-text-airy p:last-child {
+    margin-bottom: 0 !important;
 }
 
 /* Zvýraznění tipu o snídani */
@@ -515,6 +601,7 @@ canvas {
     color: #d27285;
     margin-top: 15px;
     font-size: 0.95rem;
+    line-height: 1.5; /* Volitelné: přitáhne řádky ještě blíž k sobě */
 }
 
 /* Styl pro kolečka barev u dresscodu */
@@ -539,8 +626,7 @@ canvas {
     text-align: center;
     font-size: 1.1rem;
     line-height: 1.2;
-    width: 90%; /* Roztažení na dostupnou šířku */
-    max-width: 350px; /* Aby text nebyl na širokých mobilech moc roztažený */
+    width: 100%; /* Roztažení na dostupnou šířku */
     margin: 0 auto; /* Pojistka pro vycentrování bloku */
     padding: 0;
     color: black;
@@ -548,10 +634,10 @@ canvas {
     box-sizing: border-box; /* Důležité: aby padding nerošiřoval prvek */
 }
 
-.info-content p {
-    margin: 8px 0;
-    width: 100%;
-}
+    .info-content p {
+        margin: 8px 0;
+        width: 100%;
+    }
 
 /* Kontejner pro cik-cak bloky */
 .info-block {
@@ -589,6 +675,14 @@ canvas {
     flex-shrink: 0;
 }
 
+.fade-divider {
+    border: 0;
+    height: 1px;
+    background-image: linear-gradient(to right, transparent, rgba(0, 0, 0, 0.15), transparent);
+    width: 90%;
+    margin: 40px auto;
+}
+
 
 /* Styl pro mapový odkaz, aby se nepletl */
 .map-link {
@@ -614,9 +708,9 @@ canvas {
     display: block;
 }
 
- .schedule-box .schedule-item:first-of-type {
-    padding-top: 10px; /* Snížíme horní padding u prvního řádku (obřadu) */
- }
+    .schedule-box .schedule-item:first-of-type {
+        padding-top: 10px; /* Snížíme horní padding u prvního řádku (obřadu) */
+    }
 
 /* Styl pro jeden řádek události */
 .schedule-item {
@@ -706,46 +800,121 @@ canvas {
     overflow: visible; /* DŮLEŽITÉ: aby kytky mohly až k okraji displeje */
 }
 
-    /* 2. Společný základ pro kytky v pozadí formuláře */
-    #rsvp-form::before,
-    #rsvp-form::after {
+/* Bílý box s formulářem */
+.google-form-box {
+    background: white;
+    border-radius: 20px !important;
+    overflow: hidden !important; /* Ořízne rohy i Google formuláři */
+    border: 1px solid rgba(0,0,0,0.1);
+    position: relative;
+    z-index: 5; /* Box bude pod kytkami (pokud chceš kytky NAD box) */
+    box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+}
+
+    .google-form-box iframe {
+        display: block;
+        border: none;
+        /* Pojistka pro některé prohlížeče */
+        border-radius: 20px;
+    }
+
+.rsvp-outer-container {
+    position: relative;
+    width: 90%;
+    max-width: 380px; /* Tímto nastavíš šířku jako u původního form */
+    margin: 60px auto !important; /* Vycentruje box a dá mu místo shora/zdola */
+    overflow: visible; /* Důležité: aby kytky mohly vykouknout ven */
+}
+
+.rsvp-outer-container::before,
+.rsvp-outer-container::after {
+    content: "";
+    position: absolute;
+    width: 250px;
+    height: 180px;
+    background-size: contain;
+    background-position: center;
+    background-repeat: no-repeat;
+    opacity: 0.8;
+    z-index: 10; /* Kytky budou nahoře */
+    pointer-events: none; /* Proklikneš skrz ně na formulář */
+}
+
+.rsvp-outer-container::before {
+    background-image: url('kvet_nahoru.png');
+    top: -110px; /* Posun vlevo mimo box */
+    left: -10%; /* Vycentrování vodorovně */
+}
+
+.rsvp-outer-container::after {
+    background-image: url('kvet_nahoru.png');
+    bottom: -30px; /* Posun vpravo mimo box */
+    right: -10%; /* Vycentrování vodorovně */
+}
+
+.form-flower-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 300; /* Musí být nad bílým boxem */
+    overflow: visible !important; /* Opraven překlep */
+}
+
+    /* 1. Odstraňujeme opakování a fixujeme velikost */
+    .form-flower-overlay::before,
+    .form-flower-overlay::after {
         content: "";
         position: absolute;
-        width: 200px; /* Velikost kytky */
-        height: 200px;
+        width: 150px; /* Uprav podle toho, jak moc velké je chceš */
+        height: 150px;
         background-size: contain;
-        background-repeat: no-repeat;
-        opacity: 0.35; /* Jemná průhlednost, aby nerušily vstupy do formuláře */
-        z-index: -1; /* Šoupne je pod formulář a text */
+        background-repeat: no-repeat; /* Zabrání tomu "řetězení" růží */
+        opacity: 1;
+        z-index: 1000;
+        top: -30px; /* Posun k hornímu okraji */
         pointer-events: none;
-        top: -20px; /* Pozice kousek nad horní hranu boxu */
     }
 
-    /* Kytka VLEVO - vystřelená k okraji */
-    #rsvp-form::before {
-        background-image: url('kvety.png');
-        left: -60px; /* Posun vlevo mimo bílý box */
+    /* 2. Levý roh */
+    .form-flower-overlay::before {
+        background-image: url('kvet.png');
+        left: -40px; /* Vyčnívá doleva */
+        background-position: left top;
     }
 
-    /* Kytka VPRAVO - vystřelená k okraji */
-    #rsvp-form::after {
-        background-image: url('kvety_prava.png');
-        right: -60px; /* Posun vpravo mimo bílý box */
+    /* 3. Pravý roh */
+    .form-flower-overlay::after {
+        background-image: url('kvet.png');
+        right: -40px; /* Vyčnívá doprava */
+        background-position: right top;
+        transform: scaleX(-1); /* Zrcadlově otočí růži */
     }
 
-    /* 3. Úprava nadpisu, aby ho kytky neodtlačovaly */
-    #rsvp-form h3 {
-        font-family: 'Great Vibes', cursive;
-        color: #000000;
-        font-weight: normal;
-        font-size: 2.2rem;
-        margin: 10px 0 20px 0;
-        text-align: center;
-        position: relative;
-        z-index: 2; /* Nadpis bude jasně nad kytkami */
-    }
+/* 4. Pojistka pro bílý box (aby kytky nebyly uříznuté) */
+.google-form-box {
+    overflow: visible !important; /* DŮLEŽITÉ: musí pouštět kytky ven */
+    position: relative;
+    z-index: 5;
+}
 
+/* Styl nadpisu uvnitř boxu */
+#rsvp-form h3 {
+    margin: 20px 0 10px 0;
+    font-size: 2.2rem;
+}
 
+/* Stín pod formulářem */
+.form-shadow {
+    width: 90%;
+    height: 40px;
+    background: rgba(0,0,0,0.03);
+    border-radius: 50%;
+    margin: -20px auto 0 auto;
+    filter: blur(10px);
+}
 
 .rsvp-input {
     width: 100%;
@@ -768,12 +937,12 @@ canvas {
     font-size: 0.9rem;
 }
 
-.rsvp-radio-group label {
-    display: flex;
-    align-items: center;
-    gap: 5px;
-    cursor: pointer;
-}
+    .rsvp-radio-group label {
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        cursor: pointer;
+    }
 
 /* Tlačítko zpět - dáme mu trochu prostor nahoře, aby se nelepilo na RSVP */
 .back-btn {
@@ -786,10 +955,10 @@ canvas {
 .fade-image-wrapper {
     position: relative;
     width: 100%;
-    min-height: 200px;
+    height: auto;
     margin: -30px auto;
     margin-bottom: 10px;
-    overflow: hidden; /* Pojistka */
+    overflow: visible; /* Pojistka */
 }
 
 /* Samotný obrázek */
@@ -797,17 +966,20 @@ canvas {
     width: 100%;
     height: auto;
     display: block;
-    border-radius: 10px; /* Volitelné: jemně zaoblené rohy, ladí s formulářem */
+    border-radius: 10px 10px 0 0; /* Volitelné: jemně zaoblené rohy, ladí s formulářem */
     /* MAGICKÁ ČÁST: Plynulý přechod do ztracena nahoře */
-    -webkit-mask-image: linear-gradient(to top, rgba(0,0,0,1) 20%, rgba(0,0,0,0) 100%);
-    mask-image: linear-gradient(to top, rgba(0,0,0,1) 50%, rgba(0,0,0,0) 100%);
+    -webkit-mask-image: linear-gradient(to top, rgba(0,0,0,1) 50%, rgba(0,0,0,0) 100%);
+    mask-image: linear-gradient(to top, rgba(0,0,0,1) 60%, rgba(0,0,0,0) 100%);
 }
 
 /* Kontejner, který drží instrukce - teď slouží jako mantinel pro kytky */
 .relative-title {
     position: relative;
-    width: 100%;
-    overflow: visible; /* Důležité: dovolí kytkám vykouknout ven z boxu */
+    width: 90%; /* Stejná šířka jako RSVP form */
+    max-width: 380px;
+    margin: 40px auto 0 auto !important;
+    overflow: visible;
+    padding: 20px 20px;
     z-index: 1;
 }
 
@@ -820,26 +992,25 @@ canvas {
         height: 300px;
         background-size: contain;
         background-repeat: no-repeat;
-        opacity: 0.3; /* Jemná průhlednost, aby text zůstal čitelný */
+        opacity: 0.6; /* Jemná průhlednost, aby text zůstal čitelný */
         z-index: -1; /* Šoupne růži dospod pod všechen text */
         pointer-events: none; /* Kliknutí projdou skrz růži na odkazy/text */
-        top: 0px; /* Pozice odshora - uprav podle potřeby */
+        top: 10px; /* Pozice odshora - uprav podle potřeby */
     }
 
     /* Růže vlevo - přilepená na úplný levý okraj obrazovky */
     .relative-title::before {
         background-image: url('kvet.png'); /* Tvůj název souboru */
-        left: -150px; /* Pokud chceš, aby kousek růže "vyčníval" ven z displeje */
+        left: -140px; /* Pokud chceš, aby kousek růže "vyčníval" ven z displeje */
     }
 
     /* Růže vpravo - přilepená na úplný pravý okraj obrazovky */
     .relative-title::after {
         background-image: url('kvet_vpravo.png'); /* Tvůj název souboru */
-        right: -150px; /* Pokud chceš, aby kousek růže "vyčníval" ven z displeje */
+        right: -140px; /* Pokud chceš, aby kousek růže "vyčníval" ven z displeje */
     }
 
 /* Pojistka pro mobil: aby růže nezpůsobily vodorovné posouvání stránky */
 body {
     overflow-x: hidden;
 }
-

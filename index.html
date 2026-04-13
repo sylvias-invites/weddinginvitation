@@ -1,4 +1,4 @@
-﻿﻿﻿
+﻿
 <!DOCTYPE html>
 <html lang="cs">
 <head>
@@ -45,7 +45,6 @@
 
 </head>
 <body>
-
     <div class="screen">
         <h1 id="main-title">Péťa & Anička</h1>
         <div id="initials" class="initials">Zapište si datum</div>
@@ -86,13 +85,13 @@
         <p id="instruction">Setřete srdíčko</p>
 
         <div id="calendar-wrapper" class="hidden">
-            <a href="javascript:void(0)" class="calendar-btn" onclick="showInfo()">
-                <div class="calendar-icon">i</div>
+            <a href="javascript:void(0)" class="calendar-btn calendar-btn-info" onclick="showInfo()">
+                <div class="calendar-icon" aria-hidden="true">i</div>
                 <span>Pro další informace klikněte sem</span>
             </a>
 
-            <a href="javascript:void(0)" class="calendar-btn" onclick="addToCalendar()">
-                <div class="calendar-icon">666</div>
+            <a href="javascript:void(0)" class="calendar-btn calendar-btn-add" onclick="addToCalendar()">
+                <div class="calendar-icon" aria-hidden="true">6</div>
                 <span>Přidat do kalendáře</span>
             </a>
         </div>
@@ -131,7 +130,7 @@
                         <div class="schedule-time">14:30</div>
                         <div class="schedule-text">
                             <h4>Svatební focení</h4>
-                            <p>Zámecké náměstí<br>Teplice</p>
+                            <p>Zámecké náměstí, Zámecká zahrada<br>Teplice</p>
                         </div>
                     </div>
 
@@ -278,6 +277,9 @@
 
         <div id="confetti-container"></div>
     </div>
+    </div>
+    <div id="vue-app" style="display: none;"></div>
+    <script type="module" src="/main.js"></script>
     <script src="script.js?v=5.88"></script>
 </body>
 </html>
